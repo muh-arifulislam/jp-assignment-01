@@ -44,7 +44,7 @@ const productSchema = new Schema<IProduct>(
     tags: {
       type: [String],
     },
-    variants: variantSchema,
+    variants: [variantSchema],
     inventory: inventorySchema,
   },
   {
