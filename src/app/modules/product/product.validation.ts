@@ -54,4 +54,43 @@ const createProductSchema = z.object({
   }),
 });
 
-export const ProductValidations = { createProductSchema };
+const updateProductSchema = z.object({
+  body: z.object({
+    name: z
+      .string({
+        required_error: "Product Name is required!",
+        invalid_type_error: "Product Name must be a string!",
+      })
+      .optional(),
+    description: z
+      .string({
+        required_error: "Description is required!",
+        invalid_type_error: "Description must be a string!",
+      })
+      .optional(),
+    price: z
+      .number({
+        required_error: "Price is required!",
+        invalid_type_error: "Price must be number!",
+      })
+      .optional(),
+    category: z
+      .string({
+        required_error: "Category is required!",
+        invalid_type_error: "Category must be a string!",
+      })
+      .optional(),
+    tags: z
+      .array(
+        z.string({
+          required_error: "Tag is required!",
+          invalid_type_error: "Tag must be a string!",
+        })
+      )
+      .optional(),
+    variants: z.array(createVariantSchema).optional(),
+    inventory: createInventorySchema.optional(),
+  }),
+});
+
+export const ProductValidations = { createProductSchema, updateProductSchema };
