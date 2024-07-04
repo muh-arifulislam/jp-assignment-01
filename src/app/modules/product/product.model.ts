@@ -1,5 +1,11 @@
-import { model, Schema } from "mongoose";
-import { IProduct, TInventory, TVariant } from "./product.interface";
+import { model, Schema, Types } from "mongoose";
+import {
+  IProduct,
+  IProductMethods,
+  ProductModel,
+  TInventory,
+  TVariant,
+} from "./product.interface";
 
 const variantSchema = new Schema<TVariant>(
   {
@@ -23,7 +29,7 @@ const inventorySchema = new Schema<TInventory>(
   }
 );
 
-const productSchema = new Schema<IProduct>(
+const productSchema = new Schema<IProduct, ProductModel, IProductMethods>(
   {
     name: {
       type: String,
@@ -53,4 +59,10 @@ const productSchema = new Schema<IProduct>(
   }
 );
 
-export const Product = model<IProduct>("Product", productSchema);
+productSchema.statics.isProductExists = async function (
+  id: string | Types.ObjectId
+) {
+  return await this.findById(id);
+};
+
+export const Product = model<IProduct, ProductModel>("Product", productSchema);
