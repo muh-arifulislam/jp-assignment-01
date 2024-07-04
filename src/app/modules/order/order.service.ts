@@ -58,4 +58,24 @@ const addOneIntoDB = async (payload: TOrder) => {
   }
 };
 
-export const OrderServices = { addOneIntoDB };
+const findOrdersFromDB = async (email: string) => {
+  const aggregate = Order.aggregate([]);
+
+  //filter order if email is provided
+  if (email) {
+    aggregate.match({ email });
+  }
+
+  //project stage
+  aggregate.project({
+    _id: 0,
+  });
+
+  const orders = await aggregate;
+  return orders;
+};
+
+export const OrderServices = {
+  addOneIntoDB,
+  findOrdersFromDB,
+};

@@ -14,4 +14,16 @@ const createOrder = catchAsync(async (req, res) => {
   });
 });
 
-export const OrderControllers = { createOrder };
+const getOrders = catchAsync(async (req, res) => {
+  const { email } = req.query;
+
+  const result = await OrderServices.findOrdersFromDB(email as string);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Orders fetched successfully!",
+    data: result,
+  });
+});
+
+export const OrderControllers = { createOrder, getOrders };
