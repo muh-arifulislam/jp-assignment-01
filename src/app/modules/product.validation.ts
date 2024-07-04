@@ -12,10 +12,13 @@ const createVariantSchema = z.object({
 });
 
 const createInventorySchema = z.object({
-  quantity: z.number({
-    required_error: "Quantity is required!",
-    invalid_type_error: "Quantity must be a number!",
-  }),
+  quantity: z
+    .number({
+      required_error: "Quantity is required!",
+      invalid_type_error: "Quantity must be a number!",
+    })
+    .int()
+    .positive(),
   inStock: z.boolean({
     required_error: "InStoack is required!",
     invalid_type_error: "InStoack must be a boolean!",

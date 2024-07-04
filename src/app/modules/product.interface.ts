@@ -16,4 +16,6 @@ export interface IProduct {
   tags: string[];
   variants: TVariant[];
   inventory: TInventory;
+  createdAt?: string;
+  updatedAt?: string;
 }
