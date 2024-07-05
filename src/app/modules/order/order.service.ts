@@ -49,7 +49,9 @@ const addOneIntoDB = async (payload: TOrder) => {
 
     await session.commitTransaction();
     await session.endSession();
+
     return result;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     await session.abortTransaction();
@@ -58,7 +60,7 @@ const addOneIntoDB = async (payload: TOrder) => {
   }
 };
 
-const findOrdersFromDB = async (email: string) => {
+const findOrdersFromDB = async (email: string | null | undefined) => {
   const aggregate = Order.aggregate([]);
 
   //filter order if email is provided
@@ -72,7 +74,17 @@ const findOrdersFromDB = async (email: string) => {
   });
 
   const orders = await aggregate;
-  return orders;
+
+  let message = "Orders fetched successfully!";
+
+  if (email) {
+    message = "Orders fetched successfully for user email!";
+  }
+
+  return {
+    message,
+    data: orders,
+  };
 };
 
 export const OrderServices = {

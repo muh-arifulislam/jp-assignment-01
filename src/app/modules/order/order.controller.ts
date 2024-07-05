@@ -17,12 +17,14 @@ const createOrder = catchAsync(async (req, res) => {
 const getOrders = catchAsync(async (req, res) => {
   const { email } = req.query;
 
-  const result = await OrderServices.findOrdersFromDB(email as string);
+  const { message, data } = await OrderServices.findOrdersFromDB(
+    email as string
+  );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
-    message: "Orders fetched successfully!",
-    data: result,
+    statusCode: httpStatus.OK,
+    message,
+    data,
   });
 });
 

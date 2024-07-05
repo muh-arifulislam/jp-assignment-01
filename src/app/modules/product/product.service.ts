@@ -36,11 +36,26 @@ const getAllFromDB = async (params: Record<string, unknown>) => {
   });
 
   const result = await query;
-  return result;
+
+  let message = "Products fetched successfully!";
+
+  //set message for filtered products
+  if (params?.searchTerm) {
+    message = `Products matching search term '${params?.searchTerm}' fetched successfully!`;
+  }
+
+  return {
+    message,
+    data: result,
+  };
 };
 
 const getOneFromDB = async (id: string) => {
-  const result = await Product.findById(id);
+  const result = await Product.findById(id).select({
+    _id: 0,
+    createdAt: 0,
+    updatedAt: 0,
+  });
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, "Product not found");
   }
@@ -49,33 +64,45 @@ const getOneFromDB = async (id: string) => {
 };
 
 const updateOneIntoDB = async (id: string, payload: Partial<IProduct>) => {
+  //check if product exists
   const product = await Product.findById(id);
   if (!product) {
     throw new AppError(httpStatus.NOT_FOUND, "Product not found");
   }
 
+  //destructure payload according to data type
   const { inventory, tags, variants, ...remainingProductData } = payload;
 
   const modifiedUpdatedDoc: Record<string, unknown> = {
     ...remainingProductData,
   };
 
+  //modify inventory obj
   if (inventory && Object.keys(inventory).length) {
     for (const [key, value] of Object.entries(inventory)) {
       modifiedUpdatedDoc[`inventory.${key}`] = value;
     }
   }
 
+  //modify tags arr
   if (tags) {
     modifiedUpdatedDoc.tags = tags;
   }
 
-  console.log(variants);
+  //modify variants arr
+  if (variants) {
+    modifiedUpdatedDoc.variants = variants;
+  }
 
   const result = await Product.findByIdAndUpdate(id, modifiedUpdatedDoc, {
     new: true,
     runValidators: true,
+  }).select({
+    _id: 0,
+    createdAt: 0,
+    updatedAt: 0,
   });
+
   return result;
 };
 

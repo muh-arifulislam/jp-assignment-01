@@ -54,6 +54,22 @@ const createProductSchema = z.object({
   }),
 });
 
+const updateInventorySchema = z.object({
+  quantity: z
+    .number({
+      required_error: "Quantity is required!",
+      invalid_type_error: "Quantity must be a number!",
+    })
+    .int()
+    .positive(),
+  inStock: z
+    .boolean({
+      required_error: "InStoack is required!",
+      invalid_type_error: "InStoack must be a boolean!",
+    })
+    .optional(),
+});
+
 const updateProductSchema = z.object({
   body: z.object({
     name: z
@@ -89,7 +105,7 @@ const updateProductSchema = z.object({
       )
       .optional(),
     variants: z.array(createVariantSchema).optional(),
-    inventory: createInventorySchema.optional(),
+    inventory: updateInventorySchema.optional(),
   }),
 });
 

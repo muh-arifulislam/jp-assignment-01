@@ -19,19 +19,21 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   } else if (err instanceof ZodError) {
     message = "Zod validation error";
     statusCode = 400;
-  } else if (err?.name === "CastError") {
-    statusCode = 400;
-    message = "Invalid ID!";
     return res.status(statusCode).json({
       success: false,
       message,
+      err,
+    });
+  } else if (err?.name === "CastError") {
+    return res.status(statusCode).json({
+      success: false,
+      message: "Invalid ID!",
     });
   }
 
   return res.status(statusCode).json({
     success: false,
     message,
-    err,
   });
 };
 
