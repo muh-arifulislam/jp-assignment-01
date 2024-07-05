@@ -54,23 +54,28 @@ const updateOneIntoDB = async (id: string, payload: Partial<IProduct>) => {
     throw new AppError(httpStatus.NOT_FOUND, "Product not found");
   }
 
-  const { variants, tags, ...restDoc } = payload;
+  const { inventory, tags, variants, ...remainingProductData } = payload;
 
-  const result = await Product.findByIdAndUpdate(
-    id,
-    {
-      ...restDoc,
-      $addToSet: { variants, tags },
-    },
-    {
-      projection: {
-        _id: 0,
-        createdAt: 0,
-        updatedAt: 0,
-      },
+  const modifiedUpdatedDoc: Record<string, unknown> = {
+    ...remainingProductData,
+  };
+
+  if (inventory && Object.keys(inventory).length) {
+    for (const [key, value] of Object.entries(inventory)) {
+      modifiedUpdatedDoc[`inventory.${key}`] = value;
     }
-  );
+  }
 
+  if (tags) {
+    modifiedUpdatedDoc.tags = tags;
+  }
+
+  console.log(variants);
+
+  const result = await Product.findByIdAndUpdate(id, modifiedUpdatedDoc, {
+    new: true,
+    runValidators: true,
+  });
   return result;
 };
 
